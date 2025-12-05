@@ -1,8 +1,11 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv   # Asegúrate de tener python-dotenv instalado
+from dotenv import load_dotenv   # necesitas tener instalado python-dotenv
 
-# BASE_DIR usando Path
+# ==========================
+# RUTAS / .ENV
+# ==========================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Cargar variables desde .env (en la misma carpeta que manage.py)
@@ -25,7 +28,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 # ALLOWED_HOSTS=localhost,127.0.0.1,ivanflores387.pythonanywhere.com
 ALLOWED_HOSTS = os.getenv(
     'ALLOWED_HOSTS',
-    'localhost,127.0.0.1'
+    'localhost,127.0.0.1,ivanflores387.pythonanywhere.com'
 ).split(',')
 
 INSTALLED_APPS = [
@@ -57,11 +60,11 @@ MIDDLEWARE = [
 # CORS
 # ==========================
 
-# En tu .env ya pusimos:
+# En tu .env puedes poner:
 # CORS_ALLOWED_ORIGINS=https://sistema-web-app.vercel.app,http://localhost:4200
 CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:4200'
+    'https://sistema-web-app.vercel.app,http://localhost:4200'
 ).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
@@ -98,8 +101,7 @@ WSGI_APPLICATION = 'app_escolar_api.wsgi.application'
 # ==========================
 # BASE DE DATOS (MySQL)
 # ==========================
-
-# En tu .env de PythonAnywhere ya tienes algo así:
+# En tu .env de PythonAnywhere:
 # DB_NAME=ivanflores387$App_Web_Api
 # DB_USER=ivanflores387
 # DB_PASSWORD=TU_PASSWORD_MYSQL
@@ -111,8 +113,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('DB_NAME', 'ivanflores387$App_Web_Api'),
         'USER': os.getenv('DB_USER', 'ivanflores387'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),  # pon la contraseña en el .env
+        # MUY IMPORTANTE: por defecto usa el host de PythonAnywhere, NO 127.0.0.1
+        'HOST': os.getenv('DB_HOST', 'ivanflores387.mysql.pythonanywhere-services.com'),
         'PORT': os.getenv('DB_PORT', '3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
