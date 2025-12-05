@@ -1,27 +1,13 @@
 import os
-from pathlib import Path
 
-# ==========================
-# RUTAS
-# ==========================
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# ==========================
-# CONFIGURACIÓN BÁSICA
-# ==========================
-
+# Mantén la clave secreta en variables de entorno en producción
 SECRET_KEY = '-_&+lsebec(whhw!%n@ww&1j=4-^j_if9x8$q778+99oz&!ms2'
 
-# Puedes poner True mientras pruebas; en producción pon False
-DEBUG = True
+DEBUG = True  # en desarrollo
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'ivanflores387.pythonanywhere.com',
-]
-
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,17 +15,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_filters',
+    'django_filters',                 # necesarios para los filtros de DRF
     'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
+    'rest_framework.authtoken',       # conserva soporte de tokens de DRF
+    'corsheaders',                    # librería CORS actualizada
     'app_escolar_api',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',     # CORS debe ir antes de CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -47,27 +33,25 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ==========================
-# CORS
-# ==========================
-
+# Configuración de CORS: define orígenes permitidos y quita CORS_ORIGIN_ALLOW_ALL
 CORS_ALLOWED_ORIGINS = [
-    'https://sistema-web-app.vercel.app',
     'http://localhost:4200',
 ]
-
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'app_escolar_api.urls'
 
-# ==========================
-# TEMPLATES / STATIC / MEDIA
-# ==========================
+
+
+import os
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATIC_URL = "/static/"
+# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# TEMPLATES[0]["DIRS"] = [os.path.join(BASE_DIR, "templates")]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 TEMPLATES = [
     {
@@ -87,28 +71,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app_escolar_api.wsgi.application'
 
-# ==========================
-# BASE DE DATOS (MySQL EN PYTHONANYWHERE)
-# ==========================
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ivanflores387$App_Web_Api',                 # nombre exacto de tu BD
-        'USER': 'ivanflores387',                             # tu usuario de PythonAnywhere
-        'PASSWORD': 'AQUI_TU_PASSWORD_MYSQL',                # <-- cámbialo por la contraseña que pusiste en "Databases"
-        'HOST': 'ivanflores387.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
         'OPTIONS': {
+            'read_default_file': os.path.join(BASE_DIR, "my.cnf"),
             'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     }
 }
-
-# ==========================
-# AUTH / I18N / DRF
-# ==========================
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -122,6 +93,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+
+STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
