@@ -43,10 +43,8 @@ MIDDLEWARE = [
 ]
 
 # CORS: permite tu frontend en Vercel y Angular local
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:4200',
-    'https://sistema-web-app-mocha.vercel.app/',
-    'https://sistema-web-kpm2vskob-jose-angel-lozanos-projects.vercel.app/',
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
