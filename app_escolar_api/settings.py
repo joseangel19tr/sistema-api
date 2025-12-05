@@ -1,13 +1,33 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv   # Asegúrate de tener python-dotenv instalado
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR usando Path
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Mantén la clave secreta en variables de entorno en producción
-SECRET_KEY = '-_&+lsebec(whhw!%n@ww&1j=4-^j_if9x8$q778+99oz&!ms2'
+# Cargar variables desde .env (en la misma carpeta que manage.py)
+load_dotenv(BASE_DIR / '.env')
 
-DEBUG = True  # en desarrollo
+# ==========================
+# CONFIGURACIÓN BÁSICA
+# ==========================
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+# Si en .env existe SECRET_KEY la toma, si no usa la que ya tenías
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    '-_&+lsebec(whhw!%n@ww&1j=4-^j_if9x8$q778+99oz&!ms2'
+)
+
+# En producción en PythonAnywhere pon DEBUG=False en tu .env
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+# En .env puedes poner:
+# ALLOWED_HOSTS=localhost,127.0.0.1,ivanflores387.pythonanywhere.com
+ALLOWED_HOSTS = os.getenv(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1'
+).split(',')
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -33,25 +53,29 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Configuración de CORS: define orígenes permitidos y quita CORS_ORIGIN_ALLOW_ALL
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:4200',
-]
+# ==========================
+# CORS
+# ==========================
+
+# En tu .env ya pusimos:
+# CORS_ALLOWED_ORIGINS=https://sistema-web-app.vercel.app,http://localhost:4200
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:4200'
+).split(',')
+
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'app_escolar_api.urls'
 
-
-
-import os
+# ==========================
+# TEMPLATES / STATIC / MEDIA
+# ==========================
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = BASE_DIR / "media"
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# TEMPLATES[0]["DIRS"] = [os.path.join(BASE_DIR, "templates")]
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 TEMPLATES = [
     {
@@ -71,15 +95,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app_escolar_api.wsgi.application'
 
+# ==========================
+# BASE DE DATOS (MySQL)
+# ==========================
+
+# En tu .env de PythonAnywhere ya tienes algo así:
+# DB_NAME=ivanflores387$App_Web_Api
+# DB_USER=ivanflores387
+# DB_PASSWORD=TU_PASSWORD_MYSQL
+# DB_HOST=ivanflores387.mysql.pythonanywhere-services.com
+# DB_PORT=3306
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'ivanflores387$App_Web_Api'),
+        'USER': os.getenv('DB_USER', 'ivanflores387'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', '3306'),
         'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, "my.cnf"),
             'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     }
 }
+
+# ==========================
+# AUTH / I18N / DRF
+# ==========================
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -93,8 +137,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
